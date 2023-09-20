@@ -30,6 +30,13 @@ let localHelper = LocalHelper(name: "MyPlugin")
 
 let name = "NewsWidgetApp"
 
+let infoPlist: [String: InfoPlist.Value] = [
+    "CFBundleShortVersionString": "1.0",
+    "CFBundleVersion": "1",
+    "UIMainStoryboardFile": "",
+    "UILaunchStoryboardName": "LaunchScreen"
+]
+
 let project = Project(
     name: name,
     organizationName: "com.Appboong",
@@ -43,10 +50,11 @@ let project = Project(
             deploymentTarget: .iOS(targetVersion: "16.0",
                                    devices: .iphone,
                                    supportsMacDesignedForIOS: true),
-            infoPlist: .default,
+            infoPlist: .extendingDefault(with: infoPlist),
             sources: ["Targets/\(name)/Sources/**"],
             resources: ["Targets/\(name)/Resources/**"],
-            dependencies: []
+            dependencies: [],
+            settings: .settings(base: ["DEVELOPMENT_TEAM": "Jaeyeol Lee"])
         ),
     ]
 )
