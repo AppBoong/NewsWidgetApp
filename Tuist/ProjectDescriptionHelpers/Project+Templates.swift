@@ -22,21 +22,27 @@ extension Project {
     /// Helper function to create a framework target and an associated unit test target
     private static func makeFrameworkTargets(name: String, platform: Platform) -> [Target] {
         let sources = Target(name: name,
-                platform: platform,
-                product: .framework,
-                bundleId: "io.tuist.\(name)",
-                infoPlist: .default,
-                sources: ["Targets/\(name)/Sources/**"],
-                resources: [],
-                dependencies: [])
+                             platform: platform,
+                             product: .framework,
+                             bundleId: "io.tuist.\(name)",
+                             deploymentTarget: .iOS(targetVersion: "16.0",
+                                                    devices: [.iphone],
+                                                    supportsMacDesignedForIOS: true),
+                             infoPlist: .default,
+                             sources: ["Targets/\(name)/Sources/**"],
+                             resources: [],
+                             dependencies: [])
         let tests = Target(name: "\(name)Tests",
-                platform: platform,
-                product: .unitTests,
-                bundleId: "io.tuist.\(name)Tests",
-                infoPlist: .default,
-                sources: ["Targets/\(name)/Tests/**"],
-                resources: [],
-                dependencies: [.target(name: name)])
+                           platform: platform,
+                           product: .unitTests,
+                           bundleId: "io.tuist.\(name)Tests",
+                           deploymentTarget: .iOS(targetVersion: "16.0",
+                                                  devices: [.iphone],
+                                                  supportsMacDesignedForIOS: true),
+                           infoPlist: .default,
+                           sources: ["Targets/\(name)/Tests/**"],
+                           resources: [],
+                           dependencies: [.target(name: name)])
         return [sources, tests]
     }
 
@@ -55,22 +61,28 @@ extension Project {
             platform: platform,
             product: .app,
             bundleId: "io.tuist.\(name)",
+            deploymentTarget: .iOS(targetVersion: "16.0",
+                                   devices: [.iphone],
+                                   supportsMacDesignedForIOS: true),
             infoPlist: .extendingDefault(with: infoPlist),
             sources: ["Targets/\(name)/Sources/**"],
             resources: ["Targets/\(name)/Resources/**"],
             dependencies: dependencies
         )
-
+        
         let testTarget = Target(
             name: "\(name)Tests",
             platform: platform,
             product: .unitTests,
             bundleId: "io.tuist.\(name)Tests",
+            deploymentTarget: .iOS(targetVersion: "16.0",
+                                   devices: [.iphone],
+                                   supportsMacDesignedForIOS: true),
             infoPlist: .default,
             sources: ["Targets/\(name)/Tests/**"],
             dependencies: [
                 .target(name: "\(name)")
-        ])
+            ])
         return [mainTarget, testTarget]
     }
 }
