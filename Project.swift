@@ -40,7 +40,9 @@ let infoPlist: [String: InfoPlist.Value] = [
 let project = Project(
     name: name,
     organizationName: "com.Appboong",
-    packages: [],
+    packages: [
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", from: "1.2.0"),
+        .package(url: "https://github.com/Alamofire/Alamofire", from: "5.8.0")],
     targets: [
         .init(
             name: name,
@@ -53,7 +55,8 @@ let project = Project(
             infoPlist: .extendingDefault(with: infoPlist),
             sources: ["Targets/\(name)/Sources/**"],
             resources: ["Targets/\(name)/Resources/**"],
-            dependencies: [],
+            dependencies: [.package(product: "swift-composable-architecture"),
+                           .package(product: "Alamofire")],
             settings: .settings(base: ["DEVELOPMENT_TEAM": "Jaeyeol Lee"])
         ),
     ]
