@@ -55,7 +55,7 @@ let project = Project(
             infoPlist: .extendingDefault(with: infoPlist),
             sources: ["Targets/\(name)/Sources/**"],
             resources: ["Targets/\(name)/Resources/**"],
-            dependencies: [.package(product: "swift-composable-architecture"),
+            dependencies: [.package(product: "ComposableArchitecture"),
                            .package(product: "Alamofire")],
             settings: .settings(base: ["DEVELOPMENT_TEAM": "Jaeyeol Lee"])
         ),
