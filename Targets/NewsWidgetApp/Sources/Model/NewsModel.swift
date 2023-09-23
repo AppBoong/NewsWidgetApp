@@ -8,10 +8,12 @@
 
 import Foundation
 
-struct News: Decodable {
+struct News: Decodable, Equatable, Identifiable {
+    var id: UUID = UUID()
+    
     let channel: Channel
 
-    struct Channel: Decodable {
+    struct Channel: Decodable, Equatable{
         let title: String
         let link: String
         let description: String
@@ -21,7 +23,7 @@ struct News: Decodable {
         let display: String
         let items: [Item]
 
-        struct Item: Decodable {
+        struct Item: Decodable, Equatable {
             let title: String
             let originalLink: String
             let link: String
@@ -37,4 +39,9 @@ struct News: Decodable {
             }
         }
     }
+}
+
+struct NewsResult: Equatable {
+    let newsList: [News]
+    let total: Int
 }

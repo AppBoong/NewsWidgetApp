@@ -4,19 +4,19 @@ import ComposableArchitecture
 @main
 struct NewsWidgetAppApp: App {
     init() {
-        let rootState = Root.State()
+        let state = NewsSearch.State()
         
-        store = StoreOf<Root>(initialState:rootState) {
-            Root()
+        store = StoreOf<NewsSearch>(initialState:state) {
+            NewsSearch()
         }
     }
     
     
-    let store: StoreOf<Root>
+    let store: StoreOf<NewsSearch>
     
     var body: some Scene {
         WindowGroup {
-            MainView()
+            NewsView(store: store)
         }
     }
 }
