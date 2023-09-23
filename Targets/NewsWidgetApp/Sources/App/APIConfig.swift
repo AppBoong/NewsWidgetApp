@@ -10,5 +10,5 @@ import Foundation
 
 struct APIConfig {
     static let clientID = ProcessInfo.processInfo.environment["CLIENT_ID"]
-    static let token = ProcessInfo.processInfo.environment["CLIENT_SECRET"]
+    static let cliecntSecret = ProcessInfo.processInfo.environment["CLIENT_SECRET"]
 }
