@@ -41,7 +41,7 @@ struct News: Decodable, Equatable, Identifiable {
     }
 }
 
-struct NewsResult: Equatable {
+struct NewsResult: Equatable, Decodable {
     let newsList: [News]
     let total: Int
 }
