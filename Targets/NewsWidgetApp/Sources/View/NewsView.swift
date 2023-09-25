@@ -9,22 +9,36 @@
 import SwiftUI
 import ComposableArchitecture
 
-
 struct NewsView: View {
     let store: StoreOf<NewsSearch>
+    @ObservedObject var viewStore: ViewStoreOf<NewsSearch>
+    
+    @Environment(\.colorSystem) private var colorSystem
     
     var body: some View {
-        WithViewStore(store, observe: { $0 }) { viewStore in
-            List(viewStore.state.news) { newsItem in
-                Text(newsItem.channel.title)
-                   }
-                   .onAppear {
-                       viewStore.send(.searchResponse(<#T##TaskResult<NewsResult>#>))
-                   }
-                   .overlay(
-                       ProgressView()
-                        .opacity(viewStore.isLoading ? 1 : 0)
-                   )
-               }
+        NavigationView {
+            VStack {
+                SearchBar(placeholder: "검색어를 입력해주세요.",
+                          text: viewStore.binding(
+                            get: \.searchText,
+                            send: {.searchTextChanged($0)})
+                ) {
+                    print(viewStore.state.isLoading)
+                    viewStore.send(.requestSearch)
+                }
+                .padding(20)
+                
+                if viewStore.news == nil {
+                    Color.red
+                        .padding(20)
+                } else {
+                    Color.blue
+                        .padding(20)
+                }
+                
+                Spacer(minLength: 20)
+            }
+        }
+        .navigationTitle("News")
     }
 }
