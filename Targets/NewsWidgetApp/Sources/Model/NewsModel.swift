@@ -8,40 +8,18 @@
 
 import Foundation
 
-struct News: Decodable, Equatable, Identifiable {
-    var id: UUID = UUID()
-    
-    let channel: Channel
+struct News: Decodable, Equatable {
+    let lastBuildDate: String
+    let total: Int
+    let start: Int
+    let display: Int
+    let items: [Item]
 
-    struct Channel: Decodable, Equatable{
+    struct Item: Decodable, Equatable {
         let title: String
+        let originallink: String
         let link: String
         let description: String
-        let lastBuildDate: String
-        let total: String
-        let start: String
-        let display: String
-        let items: [Item]
-
-        struct Item: Decodable, Equatable {
-            let title: String
-            let originalLink: String
-            let link: String
-            let description: String
-            let pubDate: String
-
-            enum CodingKeys: String, CodingKey {
-                case title
-                case originalLink = "originallink"
-                case link
-                case description
-                case pubDate
-            }
-        }
+        let pubDate: String
     }
-}
-
-struct NewsResult: Equatable, Decodable {
-    let newsList: [News]
-    let total: Int
 }
