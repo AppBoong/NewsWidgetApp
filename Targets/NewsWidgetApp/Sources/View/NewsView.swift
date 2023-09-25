@@ -28,13 +28,16 @@ struct NewsView: View {
                 }
                 .padding(20)
                 
-                if viewStore.news == nil {
-                    Color.red
-                        .padding(20)
-                } else {
-                    Color.blue
-                        .padding(20)
+                
+                if let news = viewStore.state.news {
+                    List(news.items) { item in
+                        VStack {
+                            Text(item.title)
+                            Text(item.description)
+                        }
+                    }
                 }
+                
                 
                 Spacer(minLength: 20)
             }
