@@ -15,7 +15,9 @@ struct News: Decodable, Equatable {
     let display: Int
     let items: [Item]
 
-    struct Item: Decodable, Equatable {
+    struct Item: Decodable, Equatable, Identifiable {
+        var id: UUID = UUID()
+        
         let title: String
         let originallink: String
         let link: String
