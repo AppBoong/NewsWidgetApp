@@ -21,6 +21,7 @@ struct NewsSearch: Reducer {
     
     enum Action: Equatable {
         case searchTextChanged(String)
+        case requestSearch
         case searchResponse(TaskResult<NewsResult>)
     }
     
@@ -31,7 +32,12 @@ struct NewsSearch: Reducer {
                 state.searchText = searchText
                 state.total = 0
                 state.news = []
-                return .cancel(id: "")
+                return .run { send in
+                    await send(.requestSearch)
+                }
+                
+            case .requestSearch:
+                return searchRequest(state: &state, text: state.searchText)
                 
             case .searchResponse(.success(let result)):
                 state.news = result.newsList
@@ -47,6 +53,19 @@ struct NewsSearch: Reducer {
                 return .none
             
             }
+        }
+    }
+    
+    private func searchRequest(state: inout State, text: String) -> Effect<Action> {
+      state.news = []
+      guard !state.searchText.isEmpty else {
+        return .none
+      }
+      state.isLoading = true
+      return .run { send in
+          await send(.searchResponse(
+            TaskResult { try await fetchSearchNews(searchText: text, display: 20)}
+          ))
         }
     }
     
