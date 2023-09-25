@@ -15,7 +15,15 @@ struct NetworkServices {
     private init() {}
     
     func fetchNews<T: Decodable>(request: NewsRequest, method: HTTPMethod) async throws -> T {
-        var URLrequest = URLRequest(url: Endpoint.fetchNews.url)
+        let queryParams: [String:String] = [
+            "query" : request.query,
+            "display" : String(request.display),
+            "start" : String(request.start)]
+        
+        var component = URLComponents(url: Endpoint.fetchNews.url, resolvingAgainstBaseURL: false)!
+        component.queryItems = queryParams.map { URLQueryItem(name: $0.key, value: $0.value) }
+        
+        var URLrequest = URLRequest(url: component.url!)
         
         URLrequest.httpMethod = method.rawValue
         
@@ -25,9 +33,12 @@ struct NetworkServices {
             URLrequest.setValue(clientSecret, forHTTPHeaderField: "X-Naver-Client-Secret")
         }
         
-        URLrequest.httpBody = try JSONEncoder().encode(request)
-        
         let (data, _) = try await URLSession.shared.data(for: URLrequest)
+        
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("Response JSON:")
+            print(jsonString)
+        }
         
         let decodedData = try JSONDecoder().decode(T.self, from: data)
         

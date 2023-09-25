@@ -16,7 +16,7 @@ struct NewsWidgetAppApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NewsView(store: store)
+            NewsView(store: store, viewStore: ViewStore(store, observe: {$0}))
         }
     }
 }

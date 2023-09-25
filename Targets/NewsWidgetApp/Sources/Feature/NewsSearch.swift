@@ -14,7 +14,7 @@ struct NewsSearch: Reducer {
     struct State: Equatable {
         var searchText = ""
         var total = 0
-        var news: [News] = []
+        var news: News?
         var error: NewsSearchError?
         var isLoading = false
     }
@@ -22,7 +22,7 @@ struct NewsSearch: Reducer {
     enum Action: Equatable {
         case searchTextChanged(String)
         case requestSearch
-        case searchResponse(TaskResult<NewsResult>)
+        case searchResponse(TaskResult<News>)
     }
     
     public var body: some ReducerOf<Self> {
@@ -31,7 +31,7 @@ struct NewsSearch: Reducer {
             case .searchTextChanged(let searchText):
                 state.searchText = searchText
                 state.total = 0
-                state.news = []
+                state.news = nil
                 return .run { send in
                     await send(.requestSearch)
                 }
@@ -40,14 +40,14 @@ struct NewsSearch: Reducer {
                 return searchRequest(state: &state, text: state.searchText)
                 
             case .searchResponse(.success(let result)):
-                state.news = result.newsList
-                state.total = result.total
+                state.news = result
+                state.total = result.items.count
                 state.isLoading = false
                 return .none
                 
             case .searchResponse(.failure(let error)):
                 state.error = error.asAppError()
-                state.news = []
+                state.news = nil
                 state.total = 0
                 state.isLoading = false
                 return .none
@@ -57,7 +57,7 @@ struct NewsSearch: Reducer {
     }
     
     private func searchRequest(state: inout State, text: String) -> Effect<Action> {
-      state.news = []
+      state.news = nil
       guard !state.searchText.isEmpty else {
         return .none
       }
@@ -69,8 +69,10 @@ struct NewsSearch: Reducer {
         }
     }
     
-    private func fetchSearchNews(searchText: String, display: Int) async throws -> NewsResult {
-        try await NetworkServices.shared.fetchNews(request: .init(query: searchText, display: display, start: 0), method: .GET)
+    private func fetchSearchNews(searchText: String, display: Int) async throws -> News {
+        
+        try await NetworkServices.shared.fetchNews(request: .init(query: searchText, display: display, start: 1), method: .GET)
+        
     }
     
 }
