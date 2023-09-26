@@ -14,13 +14,14 @@ struct NewsSearch: Reducer {
     struct State: Equatable {
         var searchText = ""
         var total = 0
-        var news: News?
+        var newsList: [News.Item] = []
         var error: NewsSearchError?
         var isLoading = false
     }
     
     enum Action: Equatable {
         case searchTextChanged(String)
+        case searchTextChangedDebounced
         case requestSearch
         case searchResponse(TaskResult<News>)
     }
@@ -28,27 +29,32 @@ struct NewsSearch: Reducer {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+                
             case .searchTextChanged(let searchText):
                 state.searchText = searchText
-                state.total = 0
-                state.news = nil
+                state.newsList = []
+                return .cancel(id: "searchTextChanged")
+                
+            case .searchTextChangedDebounced:
+                guard !state.searchText.isEmpty else {
+                    return .none
+                }
+                state.isLoading = true
                 return .run { send in
                     await send(.requestSearch)
                 }
-                
+                .cancellable(id: "searchTextChanged")
             case .requestSearch:
                 return searchRequest(state: &state, text: state.searchText)
                 
             case .searchResponse(.success(let result)):
-                state.news = result
-                state.total = result.items.count
+                state.newsList = result.items
                 state.isLoading = false
                 return .none
                 
             case .searchResponse(.failure(let error)):
                 state.error = error.asAppError()
-                state.news = nil
-                state.total = 0
+                state.newsList = []
                 state.isLoading = false
                 return .none
             
@@ -57,7 +63,7 @@ struct NewsSearch: Reducer {
     }
     
     private func searchRequest(state: inout State, text: String) -> Effect<Action> {
-      state.news = nil
+      state.newsList = []
       guard !state.searchText.isEmpty else {
         return .none
       }
