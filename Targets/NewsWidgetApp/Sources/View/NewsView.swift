@@ -24,8 +24,7 @@ struct NewsView: View {
                     VStack {
                         Spacer()
                             .frame(height: 40)
-                        Text(item.title)
-                        Text(item.description.htmlToAttributedString()?.string ?? "")
+                        NewsRow(news: item)
                     }
                 }
                 
@@ -49,17 +48,4 @@ struct NewsView: View {
     }
 }
 
-extension String {
-    func htmlToAttributedString() -> NSAttributedString? {
-        guard let data = data(using: .utf8) else { return nil }
-        do {
-            return try NSAttributedString(data: data, options: [
-                .documentType: NSAttributedString.DocumentType.html,
-                .characterEncoding: String.Encoding.utf8.rawValue
-            ], documentAttributes: nil)
-        } catch {
-            print("Error parsing HTML: \(error.localizedDescription)")
-            return nil
-        }
-    }
-}
+
