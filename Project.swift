@@ -56,8 +56,18 @@ let project = Project(
             sources: ["Targets/\(name)/Sources/**"],
             resources: ["Targets/\(name)/Resources/**"],
             dependencies: [.package(product: "ComposableArchitecture"),
-                           .package(product: "Alamofire")],
-            settings: .settings(base: ["DEVELOPMENT_TEAM": "Jaeyeol Lee"])
+                           .package(product: "Alamofire")]
         ),
+        .init(
+            name: name + "Test",
+            platform: .iOS,
+            product: .unitTests,
+            bundleId: "com.Appboong.\(name)Test",
+            infoPlist: .default,
+            sources: [],
+            resources: [],
+            dependencies: [
+                .target(name: name),
+            ])
     ]
 )
